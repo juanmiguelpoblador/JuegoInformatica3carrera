@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Clash.cpp" />
     <ClCompile Include="coordinador.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pieza_1.cpp" />
