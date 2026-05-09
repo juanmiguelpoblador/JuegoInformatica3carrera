@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Clasro.vcxproj" Id="b7559332-b87f-4384-a590-035f4025aac8" />
+</Solution>
