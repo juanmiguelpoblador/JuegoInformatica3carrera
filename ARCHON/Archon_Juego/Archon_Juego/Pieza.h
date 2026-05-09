@@ -5,20 +5,20 @@
 #include <algorithm>
 
 // Equipos
- class Equipo {
+ enum class Equipo {
     Azul,
     Rojo
 };
 
  //Tipos de movimiento
-class TipoMovimiento {
+enum class TipoMovimiento {
     Tierra,      
     Vuelo,      
     Teletransporte  
 };
 
 //Tipos de armas
-class TipoArma {
+enum class TipoArma {
     CuerpoACuerpo,  
     Proyectil,      
     Magia,          
@@ -213,7 +213,7 @@ public:
 
 // ---- Pieza lanzadora de hechizos ----
 
- class IdHechizo {
+ enum class IdHechizo {
     Teleportar   = 0,  // Mover pieza aliada a cualquier casilla valida
     Curar        = 1,  // Restaurar HP completo de pieza aliada
     AlterarTiempo= 2,  // Avanzar el ciclo de oscilacion
