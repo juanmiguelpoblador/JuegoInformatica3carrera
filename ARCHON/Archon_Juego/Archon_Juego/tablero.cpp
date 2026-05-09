@@ -2,7 +2,7 @@
 #include <cmath>
 #include <vector>
 Tablero::Tablero() {    
-    turnoActual = (Equipo::Luz);
+    turnoActual = (Equipo::Azul);
     contadorTurnos = 0; 
     inicializa();
 }
@@ -35,8 +35,8 @@ void Tablero::inicializa() {
     }
     // Colocar piezas usando "new" 
     // (Asegúrate de incluir la cabecera correcta para Mago y Bruja)
-    matriz[0][4].pieza = new Mago(Equipo::Luz);
-    matriz[8][4].pieza = new Bruja(Equipo::Oscuridad);
+    matriz[0][4].pieza = new Mago(Equipo::Azul);
+    matriz[8][4].pieza = new Bruja(Equipo::Rojo);
     //completar con el resto de las 18 piezas por bando
 }
 
@@ -86,15 +86,16 @@ void Tablero::aplicarCuracion() {
             Pieza* p = matriz[i][j].pieza;
             if (p != nullptr) {
                 // Las piezas en los puntos de poder se curan más rápido [cite: 137]
-                if (matriz[i][j].esPuntoPoder) 
+                if (matriz[i][j].esPuntoPoder)
                     p->curar(15);
+            }
         }
     }
 }
 
 void Tablero::finalizarTurno() {
     aplicarCuracion();
-    turnoActual = (turnoActual == Equipo::Luz) ? Equipo::Oscuridad : Equipo::Luz;
+    turnoActual = (turnoActual == Equipo::Azul) ? Equipo::Rojo : Equipo::Azul;
     contadorTurnos++;
 }
 
