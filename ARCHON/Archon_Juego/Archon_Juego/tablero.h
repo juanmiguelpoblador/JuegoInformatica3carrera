@@ -28,6 +28,10 @@ public: //CHEKEAR CAMBIOS (VISUAL)
 
     // Hechizos (Cerebro del juego)
     bool ejecutarHechizo(int idHechizo, int x, int y, int x2 = -1, int y2 = -1);
+    void resolverCombate(Pieza* perdedor);
+    Pieza* getAtacante() const;
+    Pieza* getDefensor() const;
+    bool hayCombatePendiente() const;
 
 private:
     Casilla matriz[TAM][TAM];//9X9
@@ -37,4 +41,6 @@ private:
     // Métodos auxiliares
     bool esMovimientoLegal(Pieza* p, int xO, int yO, int xD, int yD) const; //comprueba si pieza puede llegar a su destino segun rango y tipo (Tierra,Vuelo,Tp)
     void aplicarCuracion(); //Recorre tablero buscando piezas en punto de poder para aplicar bonificador
+    int atacanteX = -1, atacanteY = -1;
+    int defensorX = -1, defensorY = -1;
 };

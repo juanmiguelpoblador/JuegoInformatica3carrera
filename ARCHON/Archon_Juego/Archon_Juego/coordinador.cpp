@@ -14,11 +14,8 @@ void Coordinador::mueve(double dt) {
     case TURNO_ROJO:
         tablero.mueve(dt); // Actualiza animaciones de las piezas moviéndose
 
-        // Comprobamos si las casillas deben cambiar de color (ciclo de oscilación)
-        tablero.actualizarOscilacionCasillas();
-
         // 1. Detectar si hay victoria tras el último movimiento 
-        if (tablero.comprobarVictoria()) {
+        if (tablero.comprobarVictoria() != ResultadoVictoria::Ninguno) {
             estado = FIN_PARTIDA;
         }
         // 2. Detectar si dos piezas han chocado en la misma casilla

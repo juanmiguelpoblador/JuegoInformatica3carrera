@@ -20,6 +20,5 @@ class Coordinador
         void raton(int boton, int estado, int x, int y); // Para interactuar con el ratón
         void mueve(double dt);
         void dibuja() const;
-    };
 };
 
