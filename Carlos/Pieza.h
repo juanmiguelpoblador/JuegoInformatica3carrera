@@ -14,7 +14,7 @@
 class TipoMovimiento {
     Tierra,      
     Vuelo,      
-    Teletransporte  /
+    Teletransporte  
 };
 
 class TipoArma {
