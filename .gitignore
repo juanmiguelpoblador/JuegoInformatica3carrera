@@ -4,3 +4,5 @@ Release/
 *.db
 *.opendb
 *.user
+/ARCHON/Archon_Juego/SFML-2.6.2
+/ARCHON/Archon_Juego/Archon_Juego/SFML-2.6.2
