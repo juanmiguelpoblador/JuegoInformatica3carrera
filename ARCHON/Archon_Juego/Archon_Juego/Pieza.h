@@ -17,6 +17,24 @@ enum class TipoMovimiento {
     Teletransporte  
 };
 
+class PiezaTierra : public Pieza {
+public:
+    using Pieza::Pieza; // hereda el constructor de Pieza
+    TipoMovimiento getTipoMovimientoEfectivo() const override { return TipoMovimiento::Tierra; }
+};
+
+class PiezaVuelo : public Pieza {
+public:
+    using Pieza::Pieza;
+    TipoMovimiento getTipoMovimientoEfectivo() const override { return TipoMovimiento::Vuelo; }
+};
+
+class PiezaTeleport : public Pieza {
+public:
+    using Pieza::Pieza;
+    TipoMovimiento getTipoMovimientoEfectivo() const override { return TipoMovimiento::Teletransporte; }
+};
+
 //Tipos de armas
 enum class TipoArma {
     CuerpoACuerpo,  
@@ -99,49 +117,49 @@ protected:
 };
 
 
-class Caballero : public Pieza {
+class Caballero : public PiezaTierra {
 public:
     explicit Caballero(Equipo equipo); // Constructor: se ejecuta al crear un Caballero. Recibe el equipo al que pertenece
     std::string habilidadEspecial() const override { return "Ataque cuerpo a cuerpo rapido, HP bajo"; } //Descripción de la pieza
 };
 
-class Caballero_oscuro : public Pieza {
+class Caballero_oscuro : public PiezaTierra {
 public:
     explicit Caballero_oscuro(Equipo equipo);
     std::string habilidadEspecial() const override { return "Ataque cuerpo a cuerpo rapido, HP bajo"; }
 };
 
-class Golem : public Pieza {
+class Golem : public PiezaTierra {
 public:
     explicit Golem(Equipo equipo);
     std::string habilidadEspecial() const override { return "Lento pero muy resistente y con alto dano"; }
 };
 
-class PEKKA : public Pieza {
+class PEKKA : public PiezaTierra {
 public:
     explicit PEKKA(Equipo equipo);
     std::string habilidadEspecial() const override { return "Lento pero muy resistente y con alto dano"; }
 };
 
-class Dragon: public Pieza {
+class Dragon: public PiezaTierra {
 public:
     explicit Dragon(Equipo equipo);
     std::string habilidadEspecial() const override { return "Ataque magico de alcance medio, equilibrado"; }
 };
 
-class Dragon_infernal : public Pieza {
+class Dragon_infernal : public PiezaTierra {
 public:
     explicit Dragon_infernal(Equipo equipo);
     std::string habilidadEspecial() const override { return "Ataque magico de alcance medio, equilibrado"; }
 };
 
-class Arqueras : public Pieza {
+class Arqueras : public PiezaTierra {
 public:
     explicit Arqueras(Equipo equipo);
     std::string habilidadEspecial() const override { return "Proyectil de largo alcance, fragil"; }
 };
 
-class Reina_arquera : public Pieza {
+class Reina_arquera : public PiezaTierra {
 public:
     explicit Reina_arquera(Equipo equipo);
     std::string habilidadEspecial() const override { return "Proyectil de largo alcance, fragil"; }
@@ -149,25 +167,25 @@ public:
 
 // ---- Piezas voladoras ----
 
-class Valkiria : public Pieza {
+class Valkiria : public PiezaVuelo {
 public:
     explicit Valkiria(Equipo equipo);
     std::string habilidadEspecial() const override { return "Voladora, espada rapida"; }
 };
 
-class Bandida: public Pieza {
+class Bandida: public PiezaVuelo {
 public:
     explicit Bandida(Equipo equipo);
     std::string habilidadEspecial() const override { return "Voladora, grito de area"; }
 };
 
-class Curandera : public Pieza {
+class Curandera : public PiezaVuelo {
 public:
     explicit Curandera(Equipo equipo);
     std::string habilidadEspecial() const override { return "Volador, rayos electricos"; }
 };
 
-class Murcielago : public Pieza {
+class Murcielago : public PiezaVuelo {
 public:
     explicit Murcielago(Equipo equipo);
     // Forma de fuego: se convierte en bola de explosion de area
@@ -186,7 +204,7 @@ private:
     static constexpr float DURACION_FORMA_FUEGO = 3000.0f; // La forma de fuego dura 3 segundos
 };
 
-class Esbirro : public Pieza {
+class Esbirro : public PiezaVuelo {
 public:
     explicit Esbirro(Equipo equipo);
 
@@ -205,7 +223,7 @@ private:
     static constexpr float DURACION_FORMA_FUEGO = 3000.0f; // La forma de fuego dura 3 segundos
 };
 
-class Dragon_electrico : public Pieza {
+class Dragon_electrico : public PiezaVuelo {
 public:
     explicit Dragon_electrico(Equipo equipo);
     std::string habilidadEspecial() const override { return "Volador, aliento de fuego de largo alcance"; }
@@ -240,19 +258,19 @@ private:
     std::array<bool, 7> hechizosUsados_ = {}; // Array de 7 hechizos
 };
 
-class Mago : public LanzadorHechizos {
+class Mago : public PiezaTeleport {
 public:
     explicit Mago(Equipo equipo = Equipo::Azul);
 };
 
-class Bruja : public LanzadorHechizos {
+class Bruja : public PiezaTeleport {
 public:
     explicit Bruja(Equipo equipo = Equipo::Rojo);
 };
 
 // Changeling (copia la forma del rival)
 
-class Changeling : public Pieza {
+class Changeling : public PiezaVuelo {
 public:
     explicit Changeling(Equipo equipo = Equipo::Rojo);
 
