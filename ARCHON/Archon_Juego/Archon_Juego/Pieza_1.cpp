@@ -93,8 +93,6 @@ Curandera::Curandera(Equipo equipo)
 }
 
 Murcielago::Murcielago(Equipo equipo)
-<<<<<<< HEAD
-<<<<<<< HEAD
     : PiezaFuego(equipo, "Murcielago",
             TipoMovimiento::Vuelo, TipoArma::ExplosionArea,
             /*vida*/ 100,  /*vel*/ 130,
@@ -111,35 +109,6 @@ Esbirro::Esbirro(Equipo equipo)
         /*fuerzaAtaque*/   35,  /*velocidadAtaque*/ 900,
         /*alcanceAtaque*/    3,  /*rangoTablero*/ 4)
 {}
-=======
-    : PiezaVuelo(equipo, "Murcielago", TipoMovimiento::Vuelo, TipoArma::ExplosionArea, 100, 130, 35, 900, 3, 4)
-=======
-    : PiezaVuelo(equipo, "Murcielago", TipoMovimiento::Vuelo, TipoArma::ExplosionArea, 100, 130, 35, 900, 3, 4)
-{
-}
-
-void Murcielago::activarFormaFuego() {
-    if (!formaFuego_) {
-        formaFuego_ = true;
-        tiempoFormaFuego_ = DURACION_FORMA_FUEGO;
-    }
-}
-
-void Murcielago::actualizarArena(float deltams) {
-    if (formaFuego_) {
-        tiempoFormaFuego_ -= deltams;
-        if (tiempoFormaFuego_ <= 0.0f) {
-            formaFuego_ = false;
-            tiempoFormaFuego_ = 0.0f;
-        }
-    }
-}
-
-Esbirro::Esbirro(Equipo equipo)
-    : PiezaVuelo(equipo, "Esbirro", TipoMovimiento::Vuelo, TipoArma::ExplosionArea, 100, 130, 35, 900, 3, 4)
->>>>>>> 07e339029c967d5cfb1b90d778162174fe21961d
-{
-}
 
 void Murcielago::activarFormaFuego() {
     if (!formaFuego_) {
@@ -162,7 +131,28 @@ Esbirro::Esbirro(Equipo equipo)
     : PiezaVuelo(equipo, "Esbirro", TipoMovimiento::Vuelo, TipoArma::ExplosionArea, 100, 130, 35, 900, 3, 4)
 {
 }
->>>>>>> 07e339029c967d5cfb1b90d778162174fe21961d
+
+void Murcielago::activarFormaFuego() {
+    if (!formaFuego_) {
+        formaFuego_ = true;
+        tiempoFormaFuego_ = DURACION_FORMA_FUEGO;
+    }
+}
+
+void Murcielago::actualizarArena(float deltams) {
+    if (formaFuego_) {
+        tiempoFormaFuego_ -= deltams;
+        if (tiempoFormaFuego_ <= 0.0f) {
+            formaFuego_ = false;
+            tiempoFormaFuego_ = 0.0f;
+        }
+    }
+}
+
+Esbirro::Esbirro(Equipo equipo)
+    : PiezaVuelo(equipo, "Esbirro", TipoMovimiento::Vuelo, TipoArma::ExplosionArea, 100, 130, 35, 900, 3, 4)
+{
+}
 
 void PiezaFuego::activarFormaFuego() {
     if (!formaFuego_) {
