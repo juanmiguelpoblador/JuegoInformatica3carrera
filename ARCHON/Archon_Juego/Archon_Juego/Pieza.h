@@ -231,10 +231,13 @@ class Murcielago : public PiezaFuego {
 public:
     explicit Murcielago(Equipo equipo);
 <<<<<<< HEAD
+<<<<<<< HEAD
     std::string habilidadEspecial() const override {
         return "Puede transformarse en bola de fuego (explosion de area + escudo)";
     }
 =======
+=======
+>>>>>>> 07e339029c967d5cfb1b90d778162174fe21961d
     bool estaEnFormaFuego() const { return formaFuego_; }
     void activarFormaFuego();
     float getTiempoFormaFuego() const { return tiempoFormaFuego_; }
@@ -244,6 +247,9 @@ private:
     bool formaFuego_ = false;
     float tiempoFormaFuego_ = 0.0f;
     static constexpr float DURACION_FORMA_FUEGO = 3000.0f;
+<<<<<<< HEAD
+>>>>>>> 07e339029c967d5cfb1b90d778162174fe21961d
+=======
 >>>>>>> 07e339029c967d5cfb1b90d778162174fe21961d
 };
 
@@ -251,10 +257,13 @@ class Esbirro : public PiezaFuego {
 public:
     explicit Esbirro(Equipo equipo);
 <<<<<<< HEAD
+<<<<<<< HEAD
     std::string habilidadEspecial() const override {
         return "Puede transformarse en bola de fuego (explosion de area + escudo)";
     }
 =======
+=======
+>>>>>>> 07e339029c967d5cfb1b90d778162174fe21961d
     bool estaEnFormaFuego() const { return formaFuego_; }
     void activarFormaFuego();
     float getTiempoFormaFuego() const { return tiempoFormaFuego_; }
@@ -264,6 +273,9 @@ private:
     bool formaFuego_ = false;
     float tiempoFormaFuego_ = 0.0f;
     static constexpr float DURACION_FORMA_FUEGO = 3000.0f;
+<<<<<<< HEAD
+>>>>>>> 07e339029c967d5cfb1b90d778162174fe21961d
+=======
 >>>>>>> 07e339029c967d5cfb1b90d778162174fe21961d
 };
 class Dragon_electrico : public PiezaVuelo {
