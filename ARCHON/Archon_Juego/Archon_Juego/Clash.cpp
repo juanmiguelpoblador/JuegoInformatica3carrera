@@ -25,7 +25,7 @@ private:
 
     void setupMenu() {
         menuOptions.clear();
-        std::vector<std::string> names = { "JUGAR", "RANKING", "SALIR" };
+        std::vector<std::string> names = { "JUGARrrr", "RANKING", "SALIR" };
 
         // AJUSTA ESTOS VALORES SI SIGUEN SIN ENCAJAR:
         // Estos números son la altura (Y) de cada tablón de madera.
