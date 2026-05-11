@@ -29,7 +29,7 @@ private:
 
         // AJUSTA ESTOS VALORES SI SIGUEN SIN ENCAJAR:
         // Estos números son la altura (Y) de cada tablón de madera.
-        float positionsY[] = { 430.f, 525.f, 615.f };
+        float positionsY[] = { 275.f, 360.f, 440.f };
 
         for (int i = 0; i < names.size(); ++i) {
             sf::Text text;

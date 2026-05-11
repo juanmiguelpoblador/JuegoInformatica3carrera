@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="Archon_Juego/Archon_Juego.vcxproj" Id="2778de45-baf0-4e70-a813-9c7863350993" />
+  <Project Path="Archon_Juego/Archon_Juego.vcxproj" Id="4b0e74c0-d540-f8af-80d7-5c584f667dc8" />
 </Solution>
