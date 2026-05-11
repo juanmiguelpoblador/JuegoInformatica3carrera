@@ -1,8 +1,10 @@
 .vs/
+x64/
 Debug/
 Release/
-*.db
-*.opendb
+*.ipch
+*.suo
 *.user
-/ARCHON/Archon_Juego/SFML-2.6.2
+*.pdb
+*.db
 /ARCHON/Archon_Juego/Archon_Juego/SFML-2.6.2

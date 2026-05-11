@@ -104,7 +104,9 @@ void Tablero::aplicarCuracion() {
             Pieza* p = matriz[i][j].pieza;
             if (p != nullptr) {
                 // Las piezas en los puntos de poder se curan más rápido [cite: 137]
-                if (matriz[i][j].esPuntoPoder)
+
+                if (matriz[i][j].esPuntoPoder) 
+
                     p->curar(15);
             }
         }
