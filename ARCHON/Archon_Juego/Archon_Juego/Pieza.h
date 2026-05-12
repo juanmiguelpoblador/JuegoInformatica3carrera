@@ -211,32 +211,36 @@ public:
     std::string habilidadEspecial() const override { return "Volador, rayos electricos"; }
 };
 
-class Murcielago : public PiezaVuelo {
+class PiezaFuego : public PiezaVuelo {
+public:
+    using PiezaVuelo::PiezaVuelo; // hereda el constructor de PiezaVuelo
+
+    bool  estaEnFormaFuego()    const { return formaFuego_; }
+    void  activarFormaFuego();
+    float getTiempoFormaFuego() const { return tiempoFormaFuego_; }  // Devuelve los milisegundos que quedan de forma de fuego
+
+    void actualizarArena(float deltams) override;
+
+protected:
+    bool  formaFuego_ = false;  // Indica si la forma de fuego está activa, empieza desactivada
+    float tiempoFormaFuego_ = 0.0f;
+    static constexpr float DURACION_FORMA_FUEGO = 3000.0f; // La forma de fuego dura 3 segundos
+};  
+
+class Murcielago : public PiezaFuego {
 public:
     explicit Murcielago(Equipo equipo);
-    bool estaEnFormaFuego() const { return formaFuego_; }
-    void activarFormaFuego();
-    float getTiempoFormaFuego() const { return tiempoFormaFuego_; }
-    void actualizarArena(float deltams) override;
-    std::string habilidadEspecial() const override { return "Transformacion en bola de fuego"; }
-private:
-    bool formaFuego_ = false;
-    float tiempoFormaFuego_ = 0.0f;
-    static constexpr float DURACION_FORMA_FUEGO = 3000.0f;
+    std::string habilidadEspecial() const override {
+        return "Puede transformarse en bola de fuego (explosion de area + escudo)";
+    }
 };
 
-class Esbirro : public PiezaVuelo {
+class Esbirro : public PiezaFuego {
 public:
     explicit Esbirro(Equipo equipo);
-    bool estaEnFormaFuego() const { return formaFuego_; }
-    void activarFormaFuego();
-    float getTiempoFormaFuego() const { return tiempoFormaFuego_; }
-    void actualizarArena(float deltams) override;
-    std::string habilidadEspecial() const override { return "Transformacion en bola de fuego"; }
-private:
-    bool formaFuego_ = false;
-    float tiempoFormaFuego_ = 0.0f;
-    static constexpr float DURACION_FORMA_FUEGO = 3000.0f;
+    std::string habilidadEspecial() const override {
+        return "Puede transformarse en bola de fuego (explosion de area + escudo)";
+    }
 };
 
 class Dragon_electrico : public PiezaVuelo {

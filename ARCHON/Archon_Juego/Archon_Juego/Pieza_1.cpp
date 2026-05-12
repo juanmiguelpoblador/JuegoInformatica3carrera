@@ -93,7 +93,42 @@ Curandera::Curandera(Equipo equipo)
 }
 
 Murcielago::Murcielago(Equipo equipo)
-    : PiezaVuelo(equipo, "Murcielago", TipoMovimiento::Vuelo, TipoArma::ExplosionArea, 100, 130, 35, 900, 3, 4)
+    : PiezaFuego(equipo, "Murcielago",
+            TipoMovimiento::Vuelo, TipoArma::ExplosionArea,
+            /*vida*/ 100,  /*vel*/ 130,
+            /*fuerzaAtaque*/   35,  /*velocidadAtaque*/ 900,
+            /*alcanceAtaque*/    3,  /*rangoTablero*/ 4)
+{}
+
+
+
+Esbirro::Esbirro(Equipo equipo)
+    : PiezaFuego(equipo, "Esbirro",
+        TipoMovimiento::Vuelo, TipoArma::ExplosionArea,
+        /*vida*/ 100,  /*vel*/ 130,
+        /*fuerzaAtaque*/   35,  /*velocidadAtaque*/ 900,
+        /*alcanceAtaque*/    3,  /*rangoTablero*/ 4)
+{}
+
+void Murcielago::activarFormaFuego() {
+    if (!formaFuego_) {
+        formaFuego_ = true;
+        tiempoFormaFuego_ = DURACION_FORMA_FUEGO;
+    }
+}
+
+void Murcielago::actualizarArena(float deltams) {
+    if (formaFuego_) {
+        tiempoFormaFuego_ -= deltams;
+        if (tiempoFormaFuego_ <= 0.0f) {
+            formaFuego_ = false;
+            tiempoFormaFuego_ = 0.0f;
+        }
+    }
+}
+
+Esbirro::Esbirro(Equipo equipo)
+    : PiezaVuelo(equipo, "Esbirro", TipoMovimiento::Vuelo, TipoArma::ExplosionArea, 100, 130, 35, 900, 3, 4)
 {
 }
 
@@ -119,14 +154,14 @@ Esbirro::Esbirro(Equipo equipo)
 {
 }
 
-void Esbirro::activarFormaFuego() {
+void PiezaFuego::activarFormaFuego() {
     if (!formaFuego_) {
         formaFuego_ = true;
         tiempoFormaFuego_ = DURACION_FORMA_FUEGO;
     }
 }
 
-void Esbirro::actualizarArena(float deltams) {
+void PiezaFuego::actualizarArena(float deltams) {
     if (formaFuego_) {
         tiempoFormaFuego_ -= deltams;
         if (tiempoFormaFuego_ <= 0.0f) {
