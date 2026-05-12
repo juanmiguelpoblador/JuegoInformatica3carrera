@@ -1,7 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
-
+#include "coordinador.h"
+sf::RenderWindow ventana;
 class ClashInterface {
 private:
     sf::RenderWindow window;
@@ -136,7 +137,39 @@ public:
 int main() {
     ClashInterface game;
     if (game.loadAssets()) {
-        game.run();
+        // Mostrar menú hasta que el jugador pulse JUGAR
+        // La lógica del menú ya funciona sola en run()
+        // Cuando quieras conectar con el Coordinador, hazlo aquí
     }
+
+    // Arrancar el juego
+    sf::RenderWindow ventana(sf::VideoMode(1280, 720), "Archon Royale - ETSIDI Edition");
+    ventana.setFramerateLimit(60);
+
+    Coordinador coordinador;
+    sf::Clock reloj;
+
+    while (ventana.isOpen()) {
+        float dt = reloj.restart().asSeconds();
+
+        sf::Event evento;
+        while (ventana.pollEvent(evento)) {
+            if (evento.type == sf::Event::Closed)
+                ventana.close();
+            if (evento.type == sf::Event::KeyPressed)
+                coordinador.tecla(static_cast<unsigned char>(evento.key.code));
+            if (evento.type == sf::Event::MouseButtonPressed)
+                coordinador.raton(evento.mouseButton.button,
+                    evento.mouseButton.button,
+                    evento.mouseButton.x,
+                    evento.mouseButton.y);
+        }
+
+        coordinador.mueve(dt);
+        ventana.clear(sf::Color(20, 20, 30));
+        coordinador.dibuja();
+        ventana.display();
+    }
+
     return 0;
 }
