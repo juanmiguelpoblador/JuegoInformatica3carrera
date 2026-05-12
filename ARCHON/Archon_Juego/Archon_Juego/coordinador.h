@@ -1,24 +1,31 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 #include "Tablero.h"
+#include "Arena.h"
 
-class Coordinador
-{
+class Coordinador {
 private:
-    // Definimos los estados principales del juego
     enum Estado {
         INICIO,
-        TURNO_AZUL,      // Turno del Jugador 1 (ej. Rey Azul)
-        TURNO_ROJO,      // Turno del Jugador 2 (ej. Rey Rojo)
-        ARENA_COMBATE,   // Pantalla de lucha en tiempo real
+        TURNO_AZUL,
+        TURNO_ROJO,
+        ARENA_COMBATE,
         FIN_PARTIDA
     } estado;
 
-    Tablero tablero;     // El objeto que contendrá la matriz 9x9 y las tropas
+    Tablero tablero;
+
+    // --- Arena de combate ---
+    Arena*        arenaActual  = nullptr;   // arena activa (nullptr si no hay combate)
+    Pieza*        ganadorArena = nullptr;   // resultado del combate
+    sf::Clock     relojArena;              // delta time propio de la arena
 
 public:
     Coordinador();
+    ~Coordinador();
+
     void tecla(unsigned char key);
-    void raton(int boton, int estado, int x, int y); // Para interactuar con el ratón
+    void raton(int boton, int estado, int x, int y);
     void mueve(double dt);
     void dibuja() const;
 };
