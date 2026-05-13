@@ -91,22 +91,26 @@ void Tablero::dibuja() const {
     for (int i = 0; i < TAM; ++i) {
         for (int j = 0; j < TAM; ++j) {
             // Casilla
-            sf::RectangleShape cas({ TAM_CASILLA - 2.f, TAM_CASILLA - 2.f });
-            cas.setPosition(OFFSET_X + j * TAM_CASILLA, OFFSET_Y + i * TAM_CASILLA);
+            static sf::Texture texAzul, texRojo;
+            static bool texCargadas = false;
+            if (!texCargadas) {
+                texAzul.loadFromFile("assets/tile_azul.png");
+                texRojo.loadFromFile("assets/tile_rojo.png");
+                texCargadas = true;
+            }
 
-            if ((i + j) % 2 == 0)
-                cas.setFillColor(sf::Color(210, 180, 140));
-            else
-                cas.setFillColor(sf::Color(100, 70, 40));
+            sf::Sprite casillaSprite;
+            casillaSprite.setTexture((i + j) % 2 == 0 ? texAzul : texRojo);
+            casillaSprite.setPosition(OFFSET_X + j * TAM_CASILLA, OFFSET_Y + i * TAM_CASILLA);
+            float scaleX = TAM_CASILLA / casillaSprite.getTexture()->getSize().x;
+            float scaleY = TAM_CASILLA / casillaSprite.getTexture()->getSize().y;
+            casillaSprite.setScale(scaleX, scaleY);
 
             if (matriz[i][j].esPuntoPoder) {
-                cas.setOutlineColor(sf::Color(255, 215, 0));
-                cas.setOutlineThickness(3.f);
+                casillaSprite.setColor(sf::Color(255, 215, 0, 200));
             }
-            else {
-                cas.setOutlineThickness(0.f);
-            }
-            window.draw(cas);
+
+            gVentana->draw(casillaSprite);
 
             // Pieza
             if (matriz[i][j].pieza) {
