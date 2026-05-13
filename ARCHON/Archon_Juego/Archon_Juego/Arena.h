@@ -4,7 +4,7 @@
 
 class Arena {
 private:
-    std::vector<Casilla*> tablero;
+    std::vector<CasillaArena*> tablero;
     sf::Texture texAzul, texRojo, texFondo;
     sf::Sprite sprFondo;
 
@@ -43,7 +43,7 @@ public:
 
                 // Lógica de colores tipo ajedrez
                 bool esRojo = ((f + c) % 2 == 0);
-                tablero.push_back(new Casilla(px, py, TAM_CASILLA, texAzul, texRojo, esRojo));
+                tablero.push_back(new CasillaArena(px, py, TAM_CASILLA, texAzul, texRojo, esRojo));
             }
         }
     }

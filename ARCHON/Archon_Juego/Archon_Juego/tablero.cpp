@@ -1,116 +1,209 @@
 #include "tablero.h"
+#include <SFML/Graphics.hpp>
 #include <cmath>
 #include <vector>
-Tablero::Tablero() {    
-    turnoActual = (Equipo::Azul);
-    contadorTurnos = 0; 
+
+// La ventana se pasa desde el coordinador
+// Para dibujar usamos una referencia externa
+// IMPORTANTE: el coordinador llama a tablero.dibuja() y luego dibuja la selección encima
+
+// Constantes visuales (deben coincidir con coordinador.cpp)
+static constexpr float TAM_CASILLA = 70.f;
+static constexpr float OFFSET_X = 100.f;
+static constexpr float OFFSET_Y = 50.f;
+
+// Referencia a la ventana SFML (definida en Main.cpp)
+extern sf::RenderWindow* gVentana;
+
+// =========================================================
+// CONSTRUCTOR / DESTRUCTOR
+// =========================================================
+Tablero::Tablero() {
+    turnoActual = Equipo::Azul;
+    contadorTurnos = 0;
     inicializa();
 }
+
 Tablero::~Tablero() {
-    for (int i = 0; i < TAM; ++i) {
-        for (int j = 0; j < TAM; ++j) {
-            if (matriz[i][j].pieza != nullptr) {
-                delete matriz[i][j].pieza;
-                matriz[i][j].pieza = nullptr;
-            }
-        }
-    }
+    for (int i = 0; i < TAM; ++i)
+        for (int j = 0; j < TAM; ++j)
+            if (matriz[i][j].pieza) { delete matriz[i][j].pieza; matriz[i][j].pieza = nullptr; }
 }
+
+// =========================================================
+// INICIALIZA - coloca todas las piezas
+// =========================================================
 void Tablero::inicializa() {
-    // Limpiamos por si venimos de reiniciar la partida
-    for (int i = 0; i < TAM; ++i) {
+    for (int i = 0; i < TAM; ++i)
         for (int j = 0; j < TAM; ++j) {
-            if (matriz[i][j].pieza != nullptr) {
-                delete matriz[i][j].pieza;
-                matriz[i][j].pieza = nullptr;
-            }
+            if (matriz[i][j].pieza) { delete matriz[i][j].pieza; matriz[i][j].pieza = nullptr; }
             matriz[i][j].esPuntoPoder = false;
         }
-    }
 
-    // Marcar Puntos de Poder (Centro y bordes)
-    std::vector<std::pair<int, int>> pPoder = { {4,4}, {0,4}, {8,4}, {4,0}, {4,8} };
-    for (auto& p : pPoder) {
+    // Puntos de poder
+    for (auto& p : std::vector<std::pair<int, int>>{ {4,4},{0,4},{8,4},{4,0},{4,8} })
         matriz[p.first][p.second].esPuntoPoder = true;
-    }
-    // Colocar piezas usando "new" 
-    // (Asegúrate de incluir la cabecera correcta para Mago y Bruja)
-    matriz[0][4].pieza = new Mago(Equipo::Azul);
-    matriz[8][4].pieza = new Bruja(Equipo::Rojo);
-    //completar con el resto de las 18 piezas por bando
+
+    // --- Bando Azul (columna 0) ---
+    matriz[0][0].pieza = new Caballero(Equipo::Azul);
+    matriz[1][0].pieza = new Arqueras(Equipo::Azul);
+    matriz[2][0].pieza = new Dragon(Equipo::Azul);
+    matriz[3][0].pieza = new Golem(Equipo::Azul);
+    matriz[4][0].pieza = new Mago(Equipo::Azul);
+    matriz[5][0].pieza = new Golem(Equipo::Azul);
+    matriz[6][0].pieza = new Valkiria(Equipo::Azul);
+    matriz[7][0].pieza = new Arqueras(Equipo::Azul);
+    matriz[8][0].pieza = new Caballero(Equipo::Azul);
+
+    // --- Bando Rojo (columna 8) ---
+    matriz[0][8].pieza = new Caballero_oscuro(Equipo::Rojo);
+    matriz[1][8].pieza = new Reina_arquera(Equipo::Rojo);
+    matriz[2][8].pieza = new Dragon_infernal(Equipo::Rojo);
+    matriz[3][8].pieza = new PEKKA(Equipo::Rojo);
+    matriz[4][8].pieza = new Bruja(Equipo::Rojo);
+    matriz[5][8].pieza = new PEKKA(Equipo::Rojo);
+    matriz[6][8].pieza = new Bandida(Equipo::Rojo);
+    matriz[7][8].pieza = new Reina_arquera(Equipo::Rojo);
+    matriz[8][8].pieza = new Caballero_oscuro(Equipo::Rojo);
 }
 
-bool Tablero::esMovimientoLegal(Pieza* p, int xO, int yO, int xD, int yD) const {
-    // Si la casilla está ocupada POR UN ALIADO, no puedes mover ahí
-    Pieza* destino = matriz[xD][yD].pieza;
-    if (destino != nullptr && destino->getEquipo() == p->getEquipo()) {
-        return false;
+// =========================================================
+// DIBUJA
+// =========================================================
+void Tablero::dibuja() const {
+    if (!gVentana) return;
+    // Fondo del tablero
+    static sf::Texture texFondo;
+    static sf::Sprite sprFondo;
+    static bool cargado = false;
+    if (!cargado) {
+        texFondo.loadFromFile("assets/arena_fondo.png");
+        sprFondo.setTexture(texFondo);
+        sprFondo.setScale(
+            1280.f / texFondo.getSize().x,
+            720.f / texFondo.getSize().y
+        );
+        cargado = true;
+    }
+    gVentana->draw(sprFondo);
+    sf::RenderWindow& window = *gVentana;
+
+    for (int i = 0; i < TAM; ++i) {
+        for (int j = 0; j < TAM; ++j) {
+            // Casilla
+            static sf::Texture texAzul, texRojo;
+            static bool texCargadas = false;
+            if (!texCargadas) {
+                texAzul.loadFromFile("assets/tile_azul.png");
+                texRojo.loadFromFile("assets/tile_rojo.png");
+                texCargadas = true;
+            }
+
+            sf::Sprite casillaSprite;
+            casillaSprite.setTexture((i + j) % 2 == 0 ? texAzul : texRojo);
+            casillaSprite.setPosition(OFFSET_X + j * TAM_CASILLA, OFFSET_Y + i * TAM_CASILLA);
+            float scaleX = TAM_CASILLA / casillaSprite.getTexture()->getSize().x;
+            float scaleY = TAM_CASILLA / casillaSprite.getTexture()->getSize().y;
+            casillaSprite.setScale(scaleX, scaleY);
+
+            if (matriz[i][j].esPuntoPoder) {
+                casillaSprite.setColor(sf::Color(255, 215, 0, 200));
+            }
+
+            gVentana->draw(casillaSprite);
+
+            // Pieza
+            if (matriz[i][j].pieza) {
+                Pieza* p = matriz[i][j].pieza;
+
+                sf::CircleShape circ(TAM_CASILLA * 0.33f);
+                circ.setOrigin(TAM_CASILLA * 0.33f, TAM_CASILLA * 0.33f);
+                circ.setPosition(
+                    OFFSET_X + j * TAM_CASILLA + TAM_CASILLA / 2.f,
+                    OFFSET_Y + i * TAM_CASILLA + TAM_CASILLA / 2.f
+                );
+                circ.setFillColor(p->getEquipo() == Equipo::Azul
+                    ? sf::Color(70, 130, 220)
+                    : sf::Color(220, 60, 60));
+                circ.setOutlineColor(sf::Color::White);
+                circ.setOutlineThickness(2.f);
+                window.draw(circ);
+
+                // Barra de vida
+                float ratio = static_cast<float>(p->getVida()) / p->getVidaMax();
+                sf::RectangleShape fv({ TAM_CASILLA - 10.f, 5.f });
+                fv.setFillColor(sf::Color(40, 40, 40));
+                fv.setPosition(OFFSET_X + j * TAM_CASILLA + 5.f, OFFSET_Y + i * TAM_CASILLA + TAM_CASILLA - 9.f);
+                window.draw(fv);
+
+                sf::RectangleShape bv({ (TAM_CASILLA - 10.f) * ratio, 5.f });
+                bv.setFillColor(ratio > 0.5f ? sf::Color::Green : sf::Color::Red);
+                bv.setPosition(fv.getPosition());
+                window.draw(bv);
+            }
+        }
     }
 
-    int distTotal = std::abs(xD - xO) + std::abs(yD - yO);
-    if (distTotal > p->getRangoTablero()) return false;
+    // Indicador de turno lateral
+    sf::RectangleShape ind({ 18.f, TAM_CASILLA * TAM });
+    ind.setPosition(OFFSET_X - 26.f, OFFSET_Y);
+    ind.setFillColor(turnoActual == Equipo::Azul
+        ? sf::Color(70, 130, 220, 200)
+        : sf::Color(220, 60, 60, 200));
+    window.draw(ind);
+}
 
-    // Diferenciación por tipo de movimiento 
+// =========================================================
+// LÓGICA
+// =========================================================
+bool Tablero::esMovimientoLegal(Pieza* p, int xO, int yO, int xD, int yD) const {
+    Pieza* dest = matriz[xD][yD].pieza;
+    if (dest && dest->getEquipo() == p->getEquipo()) return false;
+
+    int dist = std::abs(xD - xO) + std::abs(yD - yO);
+    if (dist > p->getRangoTablero()) return false;
+
     if (p->getTipoMovimiento() == TipoMovimiento::Tierra) {
-        // No permite diagonales puras si ambas coordenadas cambian
-        if (xO != xD && yO != yD) return false; //cero diagonales puras
+        if (xO != xD && yO != yD) return false;
         if (yO == yD) {
             int paso = (xD > xO) ? 1 : -1;
-            for (int i = xO + paso; i != xD; i += paso) {
-                if (matriz[i][yO].pieza != nullptr) return false; // Hay alguien en medio
-            }
+            for (int i = xO + paso; i != xD; i += paso)
+                if (matriz[i][yO].pieza) return false;
         }
-        else if (xO == xD) {
+        else {
             int paso = (yD > yO) ? 1 : -1;
-            for (int j = yO + paso; j != yD; j += paso) {
-                if (matriz[xO][j].pieza != nullptr) return false; // Hay alguien en medio
-            }
+            for (int j = yO + paso; j != yD; j += paso)
+                if (matriz[xO][j].pieza) return false;
         }
     }
-    // Vuelo y Teletransporte ignoran obstáculos, por lo que no necesitan más validación aquí
     return true;
 }
 
 bool Tablero::moverPieza(int xO, int yO, int xD, int yD) {
-    // ESCUDO: Si hacen clic fuera del tablero de 9x9, ignoramos la acción
-    if (xO < 0 || xO >= TAM || yO < 0 || yO >= TAM ||
-        xD < 0 || xD >= TAM || yD < 0 || yD >= TAM) {
-        return false;
-    }
+    if (xO < 0 || xO >= TAM || yO < 0 || yO >= TAM || xD < 0 || xD >= TAM || yD < 0 || yD >= TAM) return false;
     Pieza* p = matriz[xO][yO].pieza;
-    if (!p || p->getEquipo() != turnoActual /* || p->estaEncarcelada() */) return false;
+    if (!p || p->getEquipo() != turnoActual) return false;
 
     if (esMovimientoLegal(p, xO, yO, xD, yD)) {
-        Pieza* destino = matriz[xD][yD].pieza;
-        if (destino != nullptr && destino->getEquipo() != p->getEquipo()) {
-            // atacanteX = xO; atacanteY = yO;
+        Pieza* dest = matriz[xD][yD].pieza;
+        if (dest && dest->getEquipo() != p->getEquipo()) {
+            atacanteX = xO; atacanteY = yO;
             defensorX = xD; defensorY = yD;
-            // Le indicamos al Coordinador que hay que pasar al estado ARENA_COMBATE
-            return true; // Le dice al Coordinador: "¡Pausa el tablero, nos vamos a la arena!"
+            return true;
         }
-
-        // Si la casilla está vacía, movimiento normal
         matriz[xD][yD].pieza = p;
         matriz[xO][yO].pieza = nullptr;
         finalizarTurno();
-        return true;    
+        return true;
     }
     return false;
 }
 
 void Tablero::aplicarCuracion() {
-    for (int i = 0; i < TAM; ++i) {
-        for (int j = 0; j < TAM; ++j) {
-            Pieza* p = matriz[i][j].pieza;
-            if (p != nullptr) {
-                // Las piezas en los puntos de poder se curan más rápido [cite: 137]
-
-                if (matriz[i][j].esPuntoPoder) 
-
-                    p->curar(15);
-            }
-        }
-    }
+    for (int i = 0; i < TAM; ++i)
+        for (int j = 0; j < TAM; ++j)
+            if (matriz[i][j].pieza && matriz[i][j].esPuntoPoder)
+                matriz[i][j].pieza->curar(15);
 }
 
 void Tablero::finalizarTurno() {
@@ -120,37 +213,46 @@ void Tablero::finalizarTurno() {
 }
 
 ResultadoVictoria Tablero::comprobarVictoria() const {
-    int controlLuz = 0, controlOsc = 0;
-    // Lógica para contar cuántos puntos de poder tiene cada bandoç
-    // Si uno llega a 5, devuelve la victoria correspondiente.
     return ResultadoVictoria::Ninguno;
 }
+
 Pieza* Tablero::getAtacante() const {
-    if (atacanteX != -1 && atacanteY != -1) return matriz[atacanteX][atacanteY].pieza;
-    return nullptr;
+    return (atacanteX != -1) ? matriz[atacanteX][atacanteY].pieza : nullptr;
 }
 
 Pieza* Tablero::getDefensor() const {
-    if (defensorX != -1 && defensorY != -1) return matriz[defensorX][defensorY].pieza;
-    return nullptr;
+    return (defensorX != -1) ? matriz[defensorX][defensorY].pieza : nullptr;
 }
 
 void Tablero::resolverCombate(Pieza* perdedor) {
-    // Aquí programaremos más adelante qué pasa cuando alguien muere en la arena
-    // (Borrar la pieza, mover al ganador a la casilla, limpiar las coordenadas, etc.)
-}
-bool Tablero::hayCombatePendiente() const {
-    // Si atacanteX no es -1, significa que hemos guardado un combate que aún no se ha resuelto
-    return (atacanteX != -1 && atacanteY != -1);
-}
-void Tablero::mueve(double dt) {
-    // Aquí irá la lógica de las animaciones y la oscilación de colores
+    if (!perdedor) return;
+
+    // Encontrar dónde está el perdedor
+    int px = -1, py = -1;
+    for (int i = 0; i < TAM && px == -1; ++i)
+        for (int j = 0; j < TAM && px == -1; ++j)
+            if (matriz[i][j].pieza == perdedor) { px = i; py = j; }
+
+    if (px == -1) return;
+
+    // El ganador ocupa la casilla del perdedor
+    bool perdedorEsDefensor = (px == defensorX && py == defensorY);
+    if (perdedorEsDefensor && atacanteX != -1) {
+        delete matriz[defensorX][defensorY].pieza;
+        matriz[defensorX][defensorY].pieza = matriz[atacanteX][atacanteY].pieza;
+        matriz[atacanteX][atacanteY].pieza = nullptr;
+    }
+    else {
+        delete matriz[px][py].pieza;
+        matriz[px][py].pieza = nullptr;
+    }
+
+    atacanteX = atacanteY = defensorX = defensorY = -1;
 }
 
-void Tablero::tecla(unsigned char key) {
-    // Aquí gestionarás las teclas si el coordinador te las pasa
+bool Tablero::hayCombatePendiente() const {
+    return (atacanteX != -1 && atacanteY != -1);
 }
-void Tablero::dibuja() const {
-    // Por ahora lo dejamos vacío para que el error desaparezca
-    // Aquí es donde luego usarás SFML o ETSIDI para pintar la cuadrícula
-}
+
+void Tablero::mueve(double dt) {}
+void Tablero::tecla(unsigned char key) {}

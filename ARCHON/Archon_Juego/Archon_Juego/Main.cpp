@@ -1,9 +1,14 @@
 #include <SFML/Graphics.hpp>
 #include "Coordinador.h"
 
+// Puntero global a la ventana, usado por tablero.cpp para dibujar
+sf::RenderWindow* gVentana = nullptr;
+
 int main() {
     sf::RenderWindow window(sf::VideoMode(1280, 720), "Archon Clash Royale");
     window.setFramerateLimit(60);
+
+    gVentana = &window;
 
     Coordinador coordinador;
     coordinador.inicializar();
@@ -19,7 +24,7 @@ int main() {
 
         coordinador.actualizar(window);
 
-        window.clear();
+        window.clear(sf::Color(20, 20, 30));
         coordinador.dibujar(window);
         window.display();
     }
