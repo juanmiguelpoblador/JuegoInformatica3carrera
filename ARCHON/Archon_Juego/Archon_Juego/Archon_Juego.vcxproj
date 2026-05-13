@@ -125,6 +125,8 @@
     <ClCompile Include="coordinador.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="menu.cpp" />
+    <ClCompile Include="Pieza_1.cpp" />
+    <ClCompile Include="tablero.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arena.h" />
@@ -132,7 +134,9 @@
     <ClInclude Include="casilla.h" />
     <ClInclude Include="coordinador.h" />
     <ClInclude Include="menu.h" />
+    <ClInclude Include="Pieza.h" />
     <ClInclude Include="PIEZAA.h" />
+    <ClInclude Include="tablero.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
