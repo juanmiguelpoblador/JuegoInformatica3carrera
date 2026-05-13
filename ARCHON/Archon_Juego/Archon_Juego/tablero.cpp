@@ -16,9 +16,9 @@ static constexpr float OFFSET_Y = 50.f;
 // Referencia a la ventana SFML (definida en Main.cpp)
 extern sf::RenderWindow* gVentana;
 
-// =========================================================
+
 // CONSTRUCTOR / DESTRUCTOR
-// =========================================================
+
 Tablero::Tablero() {
     turnoActual = Equipo::Azul;
     contadorTurnos = 0;
@@ -31,9 +31,7 @@ Tablero::~Tablero() {
             if (matriz[i][j].pieza) { delete matriz[i][j].pieza; matriz[i][j].pieza = nullptr; }
 }
 
-// =========================================================
-// INICIALIZA - coloca todas las piezas
-// =========================================================
+
 void Tablero::inicializa() {
     for (int i = 0; i < TAM; ++i)
         for (int j = 0; j < TAM; ++j) {
@@ -68,9 +66,7 @@ void Tablero::inicializa() {
     matriz[8][8].pieza = new Caballero_oscuro(Equipo::Rojo);
 }
 
-// =========================================================
-// DIBUJA
-// =========================================================
+
 void Tablero::dibuja() const {
     if (!gVentana) return;
 
@@ -182,9 +178,9 @@ void Tablero::dibuja() const {
         : sf::Color(220, 60, 60, 200));
     window.draw(ind);
 }
-// =========================================================
+
 // LÓGICA
-// =========================================================
+
 bool Tablero::esMovimientoLegal(Pieza* p, int xO, int yO, int xD, int yD) const {
     Pieza* dest = matriz[xD][yD].pieza;
     if (dest && dest->getEquipo() == p->getEquipo()) return false;
