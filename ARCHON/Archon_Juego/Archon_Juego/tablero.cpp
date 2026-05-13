@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <vector>
+#include <map>
 
 // La ventana se pasa desde el coordinador
 // Para dibujar usamos una referencia externa
@@ -49,7 +50,7 @@ void Tablero::inicializa() {
     matriz[1][0].pieza = new Arqueras(Equipo::Azul);
     matriz[2][0].pieza = new Dragon(Equipo::Azul);
     matriz[3][0].pieza = new Golem(Equipo::Azul);
-    matriz[4][0].pieza = new Mago(Equipo::Azul);
+    matriz[4][0].pieza = new Murcielago(Equipo::Azul);
     matriz[5][0].pieza = new Golem(Equipo::Azul);
     matriz[6][0].pieza = new Valkiria(Equipo::Azul);
     matriz[7][0].pieza = new Arqueras(Equipo::Azul);
@@ -60,7 +61,7 @@ void Tablero::inicializa() {
     matriz[1][8].pieza = new Reina_arquera(Equipo::Rojo);
     matriz[2][8].pieza = new Dragon_infernal(Equipo::Rojo);
     matriz[3][8].pieza = new PEKKA(Equipo::Rojo);
-    matriz[4][8].pieza = new Bruja(Equipo::Rojo);
+    matriz[4][8].pieza = new Esbirro(Equipo::Rojo);
     matriz[5][8].pieza = new PEKKA(Equipo::Rojo);
     matriz[6][8].pieza = new Bandida(Equipo::Rojo);
     matriz[7][8].pieza = new Reina_arquera(Equipo::Rojo);
@@ -72,6 +73,7 @@ void Tablero::inicializa() {
 // =========================================================
 void Tablero::dibuja() const {
     if (!gVentana) return;
+
     // Fondo del tablero
     static sf::Texture texFondo;
     static sf::Sprite sprFondo;
@@ -86,54 +88,82 @@ void Tablero::dibuja() const {
         cargado = true;
     }
     gVentana->draw(sprFondo);
+
     sf::RenderWindow& window = *gVentana;
+
+    // Texturas de casillas
+    static sf::Texture texAzul, texRojo;
+    static bool texCargadas = false;
+    if (!texCargadas) {
+        texAzul.loadFromFile("assets/tile_azul.png");
+        texRojo.loadFromFile("assets/tile_rojo.png");
+        texCargadas = true;
+    }
+
+    // Texturas de piezas con imagen
+    static std::map<std::string, sf::Texture> texPiezas;
+    static bool texPiezasCargadas = false;
+    if (!texPiezasCargadas) {
+        texPiezas["Murcielago"].loadFromFile("assets/fenix.png");
+        texPiezas["Esbirro"].loadFromFile("assets/esbirro.png");
+        texPiezasCargadas = true;
+    }
 
     for (int i = 0; i < TAM; ++i) {
         for (int j = 0; j < TAM; ++j) {
-            // Casilla
-            static sf::Texture texAzul, texRojo;
-            static bool texCargadas = false;
-            if (!texCargadas) {
-                texAzul.loadFromFile("assets/tile_azul.png");
-                texRojo.loadFromFile("assets/tile_rojo.png");
-                texCargadas = true;
-            }
 
+            // --- Dibujar casilla ---
             sf::Sprite casillaSprite;
             casillaSprite.setTexture((i + j) % 2 == 0 ? texAzul : texRojo);
             casillaSprite.setPosition(OFFSET_X + j * TAM_CASILLA, OFFSET_Y + i * TAM_CASILLA);
             float scaleX = TAM_CASILLA / casillaSprite.getTexture()->getSize().x;
             float scaleY = TAM_CASILLA / casillaSprite.getTexture()->getSize().y;
             casillaSprite.setScale(scaleX, scaleY);
-
-            if (matriz[i][j].esPuntoPoder) {
+            if (matriz[i][j].esPuntoPoder)
                 casillaSprite.setColor(sf::Color(255, 215, 0, 200));
-            }
-
             gVentana->draw(casillaSprite);
 
-            // Pieza
+            // --- Dibujar pieza ---
             if (matriz[i][j].pieza) {
                 Pieza* p = matriz[i][j].pieza;
 
-                sf::CircleShape circ(TAM_CASILLA * 0.33f);
-                circ.setOrigin(TAM_CASILLA * 0.33f, TAM_CASILLA * 0.33f);
-                circ.setPosition(
-                    OFFSET_X + j * TAM_CASILLA + TAM_CASILLA / 2.f,
-                    OFFSET_Y + i * TAM_CASILLA + TAM_CASILLA / 2.f
-                );
-                circ.setFillColor(p->getEquipo() == Equipo::Azul
-                    ? sf::Color(70, 130, 220)
-                    : sf::Color(220, 60, 60));
-                circ.setOutlineColor(sf::Color::White);
-                circ.setOutlineThickness(2.f);
-                window.draw(circ);
+                float cx = OFFSET_X + j * TAM_CASILLA + TAM_CASILLA / 2.f;
+                float cy = OFFSET_Y + i * TAM_CASILLA + TAM_CASILLA / 2.f;
 
-                // Barra de vida
+                if (texPiezas.count(p->getNombre()) > 0) {
+                    // Dibujar con imagen
+                    sf::Sprite sprPieza;
+                    sprPieza.setTexture(texPiezas[p->getNombre()]);
+                    sprPieza.setOrigin(
+                        texPiezas[p->getNombre()].getSize().x / 2.f,
+                        texPiezas[p->getNombre()].getSize().y / 2.f
+                    );
+                    sprPieza.setScale(
+                        (TAM_CASILLA * 0.8f) / texPiezas[p->getNombre()].getSize().x,
+                        (TAM_CASILLA * 0.8f) / texPiezas[p->getNombre()].getSize().y
+                    );
+                    sprPieza.setPosition(cx, cy);
+                    gVentana->draw(sprPieza);
+                }
+                else {
+                    // Dibujar círculo de color
+                    sf::CircleShape circ(TAM_CASILLA * 0.33f);
+                    circ.setOrigin(TAM_CASILLA * 0.33f, TAM_CASILLA * 0.33f);
+                    circ.setPosition(cx, cy);
+                    circ.setFillColor(p->getEquipo() == Equipo::Azul
+                        ? sf::Color(70, 130, 220)
+                        : sf::Color(220, 60, 60));
+                    circ.setOutlineColor(sf::Color::White);
+                    circ.setOutlineThickness(2.f);
+                    gVentana->draw(circ);
+                }
+
+                // --- Barra de vida ---
                 float ratio = static_cast<float>(p->getVida()) / p->getVidaMax();
                 sf::RectangleShape fv({ TAM_CASILLA - 10.f, 5.f });
                 fv.setFillColor(sf::Color(40, 40, 40));
-                fv.setPosition(OFFSET_X + j * TAM_CASILLA + 5.f, OFFSET_Y + i * TAM_CASILLA + TAM_CASILLA - 9.f);
+                fv.setPosition(OFFSET_X + j * TAM_CASILLA + 5.f,
+                    OFFSET_Y + i * TAM_CASILLA + TAM_CASILLA - 9.f);
                 window.draw(fv);
 
                 sf::RectangleShape bv({ (TAM_CASILLA - 10.f) * ratio, 5.f });
@@ -152,7 +182,6 @@ void Tablero::dibuja() const {
         : sf::Color(220, 60, 60, 200));
     window.draw(ind);
 }
-
 // =========================================================
 // LÓGICA
 // =========================================================
