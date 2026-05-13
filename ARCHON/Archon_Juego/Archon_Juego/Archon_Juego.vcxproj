@@ -122,16 +122,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Clash.cpp" />
     <ClCompile Include="coordinador.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Pieza_1.cpp" />
-    <ClCompile Include="tablero.cpp" />
+    <ClCompile Include="menu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Arena.h" />
+    <ClInclude Include="caballero.h" />
+    <ClInclude Include="casilla.h" />
     <ClInclude Include="coordinador.h" />
-    <ClInclude Include="Pieza.h" />
-    <ClInclude Include="tablero.h" />
+    <ClInclude Include="menu.h" />
+    <ClInclude Include="PIEZAA.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
