@@ -2,18 +2,18 @@
 #include <cmath>
 #include <algorithm>
 
-static constexpr float TAM_CASILLA = 70.f;
-static constexpr float OFFSET_X = 100.f;
-static constexpr float OFFSET_Y = 50.f;
+static constexpr float TAM_CASILLA = 70.f; //tamaño en pixeles 70x70
+static constexpr float OFFSET_X = 100.f; //margen de seguridad. se mueve 100 a la derecha
+static constexpr float OFFSET_Y = 50.f; //50 a la izquierda
 
-Coordinador::Coordinador()
-    : estado(EstadoJuego::MENU), menu(1280, 720)
+Coordinador::Coordinador() //constructor con lista de inicializacion
+    : estado(EstadoJuego::MENU), menu(1280, 720) //al abrir el programa menu (resolucion 1280 por ancho 720 alto)
 {
-    fuenteCargada = fuente.loadFromFile("assets/arial.ttf");
+    fuenteCargada = fuente.loadFromFile("assets/arial.ttf"); //true si se encontró archivo 
 }
 
 void Coordinador::inicializar() {
-    menu.cargarRecursos();
+    menu.cargarRecursos(); //ordena al objeto menu que cargue sus cosas
 }
 
 void Coordinador::gestionarEventos(sf::RenderWindow& window, sf::Event& event) {
