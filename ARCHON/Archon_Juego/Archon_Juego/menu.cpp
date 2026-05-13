@@ -2,7 +2,7 @@
 #include <iostream>
 
 Menu::Menu(float width, float height) {
-    // Definimos las zonas de clic (ajusta estos números a tu imagen)
+    // Definimos las zonas de clic 
     // Formato: (X, Y, Ancho, Alto)
     rectJugar = sf::FloatRect(400, 275, 480, 80);
     rectRanking = sf::FloatRect(400, 360, 480, 80);

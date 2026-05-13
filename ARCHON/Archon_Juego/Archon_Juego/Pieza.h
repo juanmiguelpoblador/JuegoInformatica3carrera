@@ -4,9 +4,9 @@
 #include <array>
 #include <algorithm>
 
-// =========================================================
+
 // 1. ENUMERACIONES (Tipos básicos)
-// =========================================================
+
 
 enum class Equipo { Azul, Rojo };
 
@@ -24,9 +24,9 @@ enum class IdHechizo {
     Encarcelar = 6
 };
 
-// =========================================================
+
 // 2. CLASE BASE PRINCIPAL (Pieza)
-// =========================================================
+
 
 class Pieza {
 public:
@@ -97,9 +97,8 @@ protected:
     bool encarcelada_ = false;
 };
 
-// =========================================================
 // 3. CLASES DE CATEGORÍA (Intermedias)
-// =========================================================
+
 
 class PiezaTierra : public Pieza {
 public:
@@ -119,9 +118,9 @@ public:
     TipoMovimiento getTipoMovimientoEfectivo() const override { return TipoMovimiento::Teletransporte; }
 };
 
-// =========================================================
+
 // 4. CLASES ESPECIALES (Lanzador de Hechizos)
-// =========================================================
+
 
 class LanzadorHechizos : public PiezaTeleport {
 public:
@@ -139,9 +138,9 @@ private:
     std::array<bool, 7> hechizosUsados_ = {};
 };
 
-// =========================================================
+
 // 5. PIEZAS CONCRETAS (Personajes)
-// =========================================================
+
 
 // --- Tierra ---
 class Caballero : public PiezaTierra {
