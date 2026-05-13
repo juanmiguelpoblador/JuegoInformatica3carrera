@@ -1,56 +1,60 @@
 #include "Coordinador.h"
 
-Coordinador::Coordinador() {
-    estado = INICIO; // Empezamos en la pantalla de título
+Coordinador::Coordinador() : menu(1280, 720), estado(EstadoJuego::INICIO) {}
+
+Coordinador::~Coordinador() {
+    // Limpieza de memoria para evitar fugas
+    for (auto& p : piezas) delete p;
+    piezas.clear();
 }
 
-void Coordinador::mueve(double dt) {
-    switch (estado) {
-    case INICIO:
-        // Lógica de inicio (animaciones del menú, etc.)
-        break;
+void Coordinador::inicializar() {
+    menu.cargarRecursos();
+}
 
-    case TURNO_AZUL:
-    case TURNO_ROJO:
-        tablero.mueve(dt); // Actualiza animaciones de las piezas moviéndose
+void Coordinador::gestionarEventos(sf::RenderWindow& window, sf::Event& event) {
+    if (estado == EstadoJuego::INICIO) {
+        EstadoMenu res = menu.procesarEventos(window, event);
+        if (res == EstadoMenu::JUGANDO) {
+            estado = EstadoJuego::ARENA_COMBATE;
 
-        // 1. Detectar si hay victoria tras el último movimiento 
-        if (tablero.comprobarVictoria() != ResultadoVictoria::Ninguno) {
-            estado = FIN_PARTIDA;
+            // --- NUEVO: SPAWN DEL CABALLERO ---
+            // Usamos el Grid System: Fila 4 (centro vertical), Columna 0 (izquierda)
+            sf::Vector2f pos = arena.getCentroCasilla(4, 0);
+
+            // Creamos la pieza y la guardamos en el vector gestor
+            piezas.push_back(new Caballero(pos.x, pos.y, 1));
         }
-        // 2. Detectar si dos piezas han chocado en la misma casilla
-        else if (tablero.hayCombatePendiente()) {
-            estado = ARENA_COMBATE;
-            // Aquí pasarías los datos de las tropas que van a pelear a la clase Arena
-        }
-        break;
-
-    case ARENA_COMBATE:
-        // Lógica de la arena de combate
-        // Si el combate termina, evalúas quién ganó y devuelves el turno al jugador correspondiente
-        break;
-
-    case FIN_PARTIDA:
-        // Detener el juego, mostrar rankings, etc.
-        break;
     }
 }
 
-void Coordinador::dibuja() const {
-    switch (estado) {
-    case INICIO:
-        // Dibujar menú inicial (ETSIDI::printxy, etc.) [cite: 1147, 1148, 1149]
-        break;
-    case TURNO_AZUL:
-    case TURNO_ROJO:
-        tablero.dibuja(); // Dibuja la matriz 9x9 y las tropas
-        // Opcional: Dibujar un indicador visual de de quién es el turno
-        break;
-    case ARENA_COMBATE:
-        // Dibujar la arena
-        break;
-    case FIN_PARTIDA:
-        // Dibujar pantalla de Game Over / Victoria
-        break;
+void Coordinador::actualizar(sf::RenderWindow& window) {
+    if (estado == EstadoJuego::INICIO) {
+        menu.actualizar(window);
     }
+    else if (estado == EstadoJuego::ARENA_COMBATE) {
+        // Actualizamos todas las piezas que existan en el vector
+        for (auto& p : piezas) {
+            p->actualizar();
+        }
+    }
+}
+
+void Coordinador::dibujar(sf::RenderWindow& window) {
+    if (estado == EstadoJuego::INICIO) {
+        menu.dibujar(window);
+    }
+    else if (estado == EstadoJuego::ARENA_COMBATE) {
+        // 1. Dibujamos el fondo y el tablero
+        arena.dibujar(window);
+
+        // 2. Dibujamos todas las piezas (Caballeros, etc.) encima del tablero
+        for (auto& p : piezas) {
+            p->dibujar(window);
+        }
+    }
+}
+
+bool Coordinador::salir() {
+    return false;
 }
